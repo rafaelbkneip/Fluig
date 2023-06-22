@@ -45,6 +45,18 @@ def pegar_dados(codigo, navegador):
 
   protocolo = navegador.find_elements(By.XPATH, '//*[@id="secCabecalho"]/div/div[1]/div/label')
 
+  #Avaliar o tipo de solicitação
+  #Caso na página da solicitação não seja possível localizar o elemento que contém essa informação, a solicitação não interessa / If it is not possible to find on the page that element that contais this information, the solicitation is not considered
+  try:
+    WebDriverWait(navegador,20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="frmFluig"]/div/div/div/h1')))
+    tipo_de_solicitacao = navegador.find_elements(By.XPATH, '//*[@id="frmFluig"]/div/div/div/h1')
+    print("\n passou \n" )
+    print(tipo_de_solicitacao)
+
+  except:
+    #Não retornar nenhuma informação dessa solicitação / Do not return any information of this solicitation
+    return "", "", "", "", "", "", "", "", "", "", "", "", True, ""
+
   #Solicitações do tipo 'Nº PROTOCOLO' e 'Reposição de Fundo Fixo' não são consideradas / 'Nº PROTOCOLO' and 'Reposição de Fundo Fixo' solicitiations are not considered
   if(protocolo[0].text =='Nº PROTOCOLO' or tipo_de_solicitacao[0].text == "Reposição de Fundo Fixo"):
     #Não retornar nenhuma informação dessa solicitação / Do not return any information of this solicitation
@@ -56,15 +68,9 @@ def pegar_dados(codigo, navegador):
     #Não retornar nenhuma informação dessa solicitação / Do not return any information of this solicitation
     return "", "", "", "", "", "", "", "", "", "", "", "", True, ""
     
-  #Avaliar o tipo de solicitação
-  #Caso na página da solicitação não seja possível localizar o elemento que contém essa informação, a solicitação não interessa / If it is not possible to find on the page that element that contais this information, the solicitation is not considered
-  try:
-    WebDriverWait(navegador,20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="frmFluig"]/div/div/div/h1')))
-    tipo_de_solicitacao = navegador.find_elements(By.XPATH, '//*[@id="frmFluig"]/div/div/div/h1')
-
-  except:
-    #Não retornar nenhuma informação dessa solicitação / Do not return any information of this solicitation
-    return "", "", "", "", "", "", "", "", "", "", "", "", True, ""
+  #Página da solicitações / Solcitations page
+  #Voltar para a página com informações da solicitação / Get back to the page with solicitation information
+  navegador.back()
 
   #Depois das conferências cima, a solicitação está validada / After the above conferences, the solicitation is validated
   #Obter informações / Get informartions
@@ -93,6 +99,8 @@ def pegar_dados(codigo, navegador):
   #CAPEX
   WebDriverWait(navegador,20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="secCabecalho"]/div/div[3]/div/span'))) 
   capex = navegador.find_element(By.XPATH, '//*[@id="secCabecalho"]/div/div[3]/div/span').text
+
+  print(tipo_de_solicitacao[0].text)
 
   #A localização das informações abaixo varia de acordo com o tipo de solicitação / The location of the informations below varies depending on solicitation type
   if (tipo_de_solicitacao[0].text == "Solicitação de Reembolso"):
